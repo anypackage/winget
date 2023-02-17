@@ -2,7 +2,7 @@
 param()
 
 BeforeAll {
-	$AnyPackageProvider = 'AnyPackage.Winget'
+	$AnyPackageProvider = 'AnyPackage.WinGet'
 	Import-Module $AnyPackageProvider -Force
 }
 
@@ -54,7 +54,7 @@ Describe 'multi-source support' {
 	}
 
 	It 'registers an alternative package source' {
-		Register-PackageSource -Name $altSource -Location $altLocation -Provider Winget -PassThru | Where-Object {$_.Name -eq $altSource} | Should -Not -BeNullOrEmpty
+		Register-PackageSource -Name $altSource -Location $altLocation -Provider WinGet -PassThru | Where-Object {$_.Name -eq $altSource} | Should -Not -BeNullOrEmpty
 		Get-PackageSource | Where-Object {$_.Name -eq $altSource} | Should -Not -BeNullOrEmpty
 	}
 	It 'searches for and installs the latest version of a package from an alternate source' {
@@ -112,9 +112,9 @@ Describe "error handling" {
 		BeforeAll {
 			$package = 'CPUID.HWMonitor'
 			$defaultSource = 'winget'
-			$WingetSource = Get-PackageSource -name $defaultSource | Select-Object -ExpandProperty Location
+			$WinGetSource = Get-PackageSource -name $defaultSource | Select-Object -ExpandProperty Location
 			Get-PackageSource | Unregister-PackageSource
-			@('test1','test2') | Register-PackageSource -Location $WingetSource -Provider Winget
+			@('test1','test2') | Register-PackageSource -Location $WinGetSource -Provider WinGet
 		}
 
 		It 'refuses to find packages when the specified source does not exist' {
@@ -135,7 +135,7 @@ Describe "error handling" {
 
 		AfterAll {
 			Get-PackageSource | Unregister-PackageSource
-			Register-PackageSource -Name $defaultSource -Location $WingetSource -Provider Winget
+			Register-PackageSource -Name $defaultSource -Location $WinGetSource -Provider WinGet
 		}
 	}
 }

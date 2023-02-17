@@ -9,25 +9,25 @@ Get-ChildItem $ScriptPath/private -Recurse -Filter '*.ps1' -File | ForEach-Objec
 	. $_.FullName
 }
 
-[PackageProvider("Winget")]
-class WingetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFindPackage, IInstallPackage, IUninstallPackage {
-	WingetProvider() : base('47e987f7-7d96-4e7b-853e-182ee6e396ae') { }
+[PackageProvider("WinGet")]
+class WinGetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFindPackage, IInstallPackage, IUninstallPackage {
+	WinGetProvider() : base('47e987f7-7d96-4e7b-853e-182ee6e396ae') { }
 
 	[void] GetSource([SourceRequest] $Request) {
-		Cobalt\Get-WingetSource | Where-Object {$_.Name -Like $Request.Name} | ForEach-Object {
+		Cobalt\Get-WinGetSource | Where-Object {$_.Name -Like $Request.Name} | ForEach-Object {
 			$Request.WriteSource($_.Name, $_.Arg, $true)
 		}
 	}
 
 	[void] RegisterSource([SourceRequest] $Request) {
-		Cobalt\Register-WingetSource -Name $Request.Name -Argument $Request.Location
-		# Winget doesn't return anything after source operations, so we make up our own output object
+		Cobalt\Register-WinGetSource -Name $Request.Name -Argument $Request.Location
+		# WinGet doesn't return anything after source operations, so we make up our own output object
 		$Request.WriteSource($Request.Name, $Request.Location.TrimEnd("\"), $Request.Trusted)
 	}
 
 	[void] UnregisterSource([SourceRequest] $Request) {
-		Cobalt\Unregister-WingetSource -Name $Request.Name
-		# Winget doesn't return anything after source operations, so we make up our own output object
+		Cobalt\Unregister-WinGetSource -Name $Request.Name
+		# WinGet doesn't return anything after source operations, so we make up our own output object
 		$Request.WriteSource($Request.Name, '')
 	}
 
@@ -36,27 +36,27 @@ class WingetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFi
 	}
 
 	[void] GetPackage([PackageRequest] $Request) {
-		Get-WingetPackage | Write-Package
+		Get-WinGetPackage | Write-Package
 	}
 
 	[void] FindPackage([PackageRequest] $Request) {
-		Find-WingetPackage | Write-Package
+		Find-WinGetPackage | Write-Package
 	}
 
 	[void] InstallPackage([PackageRequest] $Request) {
-		# Run the package request first through Find-WingetPackage to determine which source to use, and filter by any version requirements
-		Find-WingetPackage | Cobalt\Install-WingetPackage | Write-Package
+		# Run the package request first through Find-WinGetPackage to determine which source to use, and filter by any version requirements
+		Find-WinGetPackage | Cobalt\Install-WinGetPackage | Write-Package
 	}
 
 	[void] UninstallPackage([PackageRequest] $Request) {
-		# Run the package request first through Get-WingetPackage to filter by any version requirements and save it off for later use
-		$result = Get-WingetPackage
-		Cobalt\Uninstall-WingetPackage $result.ID
+		# Run the package request first through Get-WinGetPackage to filter by any version requirements and save it off for later use
+		$result = Get-WinGetPackage
+		Cobalt\Uninstall-WinGetPackage $result.ID
 
-		# Winget doesn't return any output on successful uninstallation, so we have to make up a new object to satisfy AnyPackage
+		# WinGet doesn't return any output on successful uninstallation, so we have to make up a new object to satisfy AnyPackage
 		Write-Package $result
 	}
 }
 
-[PackageProviderManager]::RegisterProvider([WingetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
+[PackageProviderManager]::RegisterProvider([WinGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
 

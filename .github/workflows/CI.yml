@@ -35,7 +35,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module
-          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.Winget\
+          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.WinGet\
       - name: Install WinGet
         shell: pwsh
         run: Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ethanbergstrom/Cobalt/master/Install-WinGet.ps1'))
@@ -53,11 +53,11 @@ jobs:
               Verbosity = 'Detailed'
             }
           })
-      - name: Upload Winget logs
+      - name: Upload WinGet logs
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: Winget-logs
+          name: WinGet-logs
           path: C:\Users\runneradmin\AppData\Local\Packages\Microsoft.DesktopAppInstaller*\LocalState\DiagOutputDir\
   Sign:
     needs: Test
@@ -90,7 +90,7 @@ jobs:
       - name: Create and sign catalog file
         run: |
           $config = Import-PowerShellDataFile SignSettings.psd1
-          $config['FilePath'] = 'AnyPackage.Winget.cat'
+          $config['FilePath'] = 'AnyPackage.WinGet.cat'
           $config['Certificate'] = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert
           Set-Location .\module
           New-FileCatalog $config['FilePath'] -CatalogVersion 2
@@ -109,7 +109,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module-signed
-          path: '~/.local/share/powershell/Modules/AnyPackage.Winget'
+          path: '~/.local/share/powershell/Modules/AnyPackage.WinGet'
       - name: Install Cobalt
         run: Install-Module Cobalt -Force
       - name: Install AnyPackage
@@ -117,4 +117,4 @@ jobs:
       - name: Publish Module
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        run: Write-Output "Publishing..."; Publish-Module -Name AnyPackage.Winget -NuGetApiKey $env:NUGET_KEY
+        run: Write-Output "Publishing..."; Publish-Module -Name AnyPackage.WinGet -NuGetApiKey $env:NUGET_KEY

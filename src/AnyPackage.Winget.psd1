@@ -1,11 +1,11 @@
 @{
-	RootModule = 'AnyPackage.Winget.psm1'
+	RootModule = 'AnyPackage.WinGet.psm1'
 	ModuleVersion = '0.0.1'
 	CompatiblePSEditions = @('Desktop', 'Core')
 	GUID = '47e987f7-7d96-4e7b-853e-182ee6e396ae'
 	Author = 'Ethan Bergstrom'
 	Copyright = '(c) 2023 Ethan Bergstrom. All rights reserved.'
-	Description = 'AnyPackage provider that facilitates installing Winget packages from any compatible repository.'
+	Description = 'AnyPackage provider that facilitates installing WinGet packages from any compatible repository.'
 	PowerShellVersion = '5.1'
 	FunctionsToExport = @()
 	CmdletsToExport = @()
@@ -22,10 +22,10 @@
 	)
 	PrivateData = @{
 		PSData = @{
-			Tags = @('AnyPackage','Provider','Winget','Windows')
-			LicenseUri = 'https://github.com/AnyPackage/AnyPackage.Winget/blob/main/LICENSE'
-			ProjectUri = 'https://github.com/AnyPackage/AnyPackage.Winget'
-			ReleaseNotes = 'Please see https://github.com/AnyPackage/AnyPackage.Winget/blob/main/CHANGELOG.md for release notes'
+			Tags = @('AnyPackage','Provider','WinGet','Windows')
+			LicenseUri = 'https://github.com/AnyPackage/AnyPackage.WinGet/blob/main/LICENSE'
+			ProjectUri = 'https://github.com/AnyPackage/AnyPackage.WinGet'
+			ReleaseNotes = 'Please see https://github.com/AnyPackage/AnyPackage.WinGet/blob/main/CHANGELOG.md for release notes'
 		}
 	}
     HelpInfoURI = 'https://go.anypackage.dev/help'

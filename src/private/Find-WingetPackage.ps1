@@ -1,4 +1,4 @@
-function Find-WingetPackage {
+function Find-WinGetPackage {
 	param (
 		[Parameter()]
 		[PackageRequest]
@@ -7,7 +7,7 @@ function Find-WingetPackage {
 
 	$DefaultPackageSource = 'winget'
 
-	[array]$RegisteredPackageSources = Cobalt\Get-WingetSource
+	[array]$RegisteredPackageSources = Cobalt\Get-WinGetSource
 
 	$selectedSource = $(
 		if ($Request.Source) {
@@ -33,7 +33,7 @@ function Find-WingetPackage {
 		}
 	)
 
-	$WingetParams = @{
+	$WinGetParams = @{
 		ID = $Request.Name
 		Source = $selectedSource
 		Exact = $true
@@ -49,7 +49,7 @@ function Find-WingetPackage {
 						Where-Object {-Not $Request.Version -Or (([NuGet.Versioning.VersionRange]$Request.Version).Satisfies($_))} |
 							Sort-Object -Descending | Select-Object -First 1
 
-		# Winget doesn't return source information when source is specified, so we have to construct a fresh object here with the source information included
+		# WinGet doesn't return source information when source is specified, so we have to construct a fresh object here with the source information included
 		$candidate | Select-Object -Property ID,@{
 			Name = 'Version'
 			Expression = {$version}
