@@ -18,6 +18,10 @@ Describe 'basic package search operations' {
 		It 'searches for the latest version of a package' {
 			Find-Package -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
+		It 'displays the correct latest version of a package' {
+			# The version of Firefox in the repository should never be lower than the version installed on the runner
+			(Find-Package 'Mozilla.Firefox').Version -ge (Get-Package 'Mozilla.Firefox').Version | Should -be True
+		}
 		It 'searches for all versions of a package' {
 			Find-Package -Name $package -Version '[0,]' | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
