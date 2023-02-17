@@ -45,7 +45,7 @@ function Find-WingetPackage {
 		$candidate = $_
 
 		# Perform an additional query to get all available versions, and create a package object for each version
-		$version = Cobalt\Get-WinGetPackageInfo -ID $candidate.ID -Versions -Source $selectedSource | 
+		$version = Cobalt\Get-WinGetPackageInfo -ID $candidate.ID -Versions -Source $selectedSource |
 						Where-Object {-Not $Request.Version -Or (([NuGet.Versioning.VersionRange]$Request.Version).Satisfies($_))} |
 							Sort-Object -Descending | Select-Object -First 1
 

@@ -11,7 +11,7 @@ Get-ChildItem $ScriptPath/private -Recurse -Filter '*.ps1' -File | ForEach-Objec
 
 [PackageProvider("Winget")]
 class WingetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFindPackage, IInstallPackage, IUninstallPackage {
-	WingetProvider() : base('070f2b8f-c7db-4566-9296-2f7cc9146bf0') { }
+	WingetProvider() : base('47e987f7-7d96-4e7b-853e-182ee6e396ae') { }
 
 	[void] GetSource([SourceRequest] $Request) {
 		Cobalt\Get-WingetSource | Where-Object {$_.Name -Like $Request.Name} | ForEach-Object {
@@ -52,7 +52,7 @@ class WingetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFi
 		# Run the package request first through Get-WingetPackage to filter by any version requirements and save it off for later use
 		$result = Get-WingetPackage
 		Cobalt\Uninstall-WingetPackage $result.ID
-		
+
 		# Winget doesn't return any output on successful uninstallation, so we have to make up a new object to satisfy AnyPackage
 		Write-Package $result
 	}
