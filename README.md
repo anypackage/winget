@@ -51,13 +51,13 @@ AnyPackage.Winget integrates with Winget.exe to manage and store source informat
 
 ## Known Issues
 ### Stability
-Winget does not currently have an official PowerShell module available on PowerShell Gallery, therefore provider currently depends on a PowerShell Cresendo-based module that is a best-effort attempt at parsing Winget's output. Due to Winget still being heavily in development, it's output patterns fluctuate regularly, making a Cresdendo-based implementation very brittle. As such, this provider *should not* currently be used in production scenarios. 
+Winget does not currently have an official module available on PowerShell Gallery, therefore this provider currently depends on a  Cresendo module that is a best-effort attempt at parsing Winget's output. Due to Winget still being heavily in development, it's output patterns fluctuate regularly, making a Cresdendo-based implementation very brittle. As such, this provider *should not* currently be used in production scenarios. 
 
 ### Output Consistency
-Due to Winget's ability to return lists of installed packages that have no version number, and the AnyPackage framework's requirement that all packages have NuGet-compatible versions, this provider suppresses installed package from Winget that have no version number. 
+Due to Winget's ability to return lists of installed packages that have no version number, and the AnyPackage framework's requirement that all packages have NuGet-compatible versions, this provider suppresses installed packages that have no version number. 
 
 ### Search specificity
-Due to Winget's ambiguous search behavior and the risks of unintended outcomes, this provider only allows searching of packages on remote repositories by exact ID. Fuzzy searches and searches by moniker, display name, and tag, are not supported. 
+Due to Winget's ambiguous search behavior and the risks of unintended outcomes, this provider only allows searching of packages on remote repositories by exact package ID. Fuzzy searches and searches by moniker, display name, and tag are not supported. 
 
 ## Legal and Licensing
 AnyPackage.Winget is licensed under the [MIT license](./LICENSE.txt).
