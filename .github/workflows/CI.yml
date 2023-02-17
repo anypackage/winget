@@ -1,0 +1,124 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+defaults:
+  run:
+    shell: pwsh
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Bundle up module
+        uses: actions/upload-artifact@v3
+        with:
+          name: module
+          path: ./src/
+  Test:
+    needs: Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download module
+        uses: actions/download-artifact@v3
+        with:
+          name: module
+          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.Winget\
+      - name: Install WinGet
+        shell: pwsh
+        run: Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ethanbergstrom/Cobalt/master/Install-WinGet.ps1'))
+      - name: Install Cobalt
+        run: Install-Module Cobalt -Force
+      - name: Install AnyPackage
+        run: Install-Module AnyPackage -Force -AllowClobber
+      - name: List installed packages
+        run: Get-WinGetPackage
+      - name: Search for a package
+        run: Find-WinGetPackage -ID CPUID.HWMonitor -Exact -Source winget
+      - name: Test with Pester
+        run: |
+          Invoke-Pester -Configuration (New-PesterConfiguration -Hashtable @{
+            Run = @{
+              Exit = $true
+            }
+            Output = @{
+              Verbosity = 'Detailed'
+            }
+          })
+      - name: Upload Winget logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Winget-logs
+          path: C:\Users\runneradmin\AppData\Local\Packages\Microsoft.DesktopAppInstaller*\LocalState\DiagOutputDir\
+  Sign:
+    needs: Test
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download module
+        uses: actions/download-artifact@v3
+        with:
+          name: module
+          path: module
+      - name: Import certificate
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+          CERTIFICATE_PASSWORD_KEY_BASE64: ${{ secrets.CERTIFICATE_PASSWORD_KEY_BASE64 }}
+        run: |
+          [convert]::FromBase64String($env:CERTIFICATE_BASE64) | Set-Content -Path cert.pfx -AsByteStream
+          $key = [convert]::FromBase64String($env:CERTIFICATE_PASSWORD_KEY_BASE64)
+          $password = ConvertTo-SecureString $env:CERTIFICATE_PASSWORD -Key $key
+          Import-PfxCertificate cert.pfx -Password $password -CertStoreLocation Cert:\CurrentUser\My
+      - name: Sign files
+        run: |
+          $config = Import-PowerShellDataFile SignSettings.psd1
+          $config['Certificate'] = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert
+          Set-Location .\module
+          Set-AuthenticodeSignature @config
+      - name: Create and sign catalog file
+        run: |
+          $config = Import-PowerShellDataFile SignSettings.psd1
+          $config['FilePath'] = 'AnyPackage.Winget.cat'
+          $config['Certificate'] = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert
+          Set-Location .\module
+          New-FileCatalog $config['FilePath'] -CatalogVersion 2
+          Set-AuthenticodeSignature @config
+      - name: Upload module
+        uses: actions/upload-artifact@v3
+        with:
+          name: module-signed
+          path: ./module/
+  Publish:
+    needs: Sign
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download module
+        uses: actions/download-artifact@v3
+        with:
+          name: module-signed
+          path: '~/.local/share/powershell/Modules/AnyPackage.Winget'
+      - name: Install Cobalt
+        run: Install-Module Cobalt -Force
+      - name: Install AnyPackage
+        run: Install-Module AnyPackage -Force -AllowClobber
+      - name: Publish Module
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        run: Write-Output "Publishing..."; Publish-Module -Name AnyPackage.Winget -NuGetApiKey $env:NUGET_KEY
