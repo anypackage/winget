@@ -21,6 +21,9 @@
 		}
 	)
 	PrivateData = @{
+		AnyPackage = @{
+			Providers = 'WinGet'
+		}
 		PSData = @{
 			Tags = @('AnyPackage','Provider','WinGet','Windows')
 			LicenseUri = 'https://github.com/AnyPackage/AnyPackage.WinGet/blob/main/LICENSE'
