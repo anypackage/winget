@@ -13,7 +13,7 @@
 	RequiredModules = @(
 		@{
 			ModuleName = 'AnyPackage'
-			ModuleVersion = '0.1.0'
+			ModuleVersion = '0.4.1'
 		},
 		@{
 			ModuleName = 'Cobalt'
