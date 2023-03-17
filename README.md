@@ -54,7 +54,7 @@ AnyPackage.WinGet integrates with WinGet.exe to manage and store source informat
 WinGet does not currently have an official module available on PowerShell Gallery, therefore this provider currently depends on a  Cresendo module that is a best-effort attempt at parsing WinGet's output. Due to WinGet still being heavily in development, it's output patterns fluctuate regularly, making a Cresdendo-based implementation very brittle. As such, currently this provider **should not** be used in production scenarios. 
 
 ### Output Consistency
-Due to WinGet's ability to return lists of installed packages that have no version number, and the AnyPackage framework's requirement that all packages have NuGet-compatible versions, this provider suppresses installed packages that have no version number. 
+Due to WinGet's ability to return lists of installed packages that have no version number, and the AnyPackage framework's requirement that all packages have a version, this provider sets the version to 0 for packages that have no version number.
 
 ### Search Specificity
 Due to WinGet's ambiguous search behavior and the risks of unintended outcomes, this provider only allows searching of packages on remote repositories by exact package ID. Fuzzy searches and searches by moniker, display name, and tag are not supported. 
