@@ -15,20 +15,23 @@ class WinGetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFi
 
 	[void] GetSource([SourceRequest] $Request) {
 		Cobalt\Get-WinGetSource | Where-Object {$_.Name -Like $Request.Name} | ForEach-Object {
-			$Request.WriteSource($_.Name, $_.Arg, $true)
+			$source = [PackageSourceInfo]::new($_.Name, $_.Arg, $true, $this.ProviderInfo)
+			$Request.WriteSource($source)
 		}
 	}
 
 	[void] RegisterSource([SourceRequest] $Request) {
 		Cobalt\Register-WinGetSource -Name $Request.Name -Argument $Request.Location
 		# WinGet doesn't return anything after source operations, so we make up our own output object
-		$Request.WriteSource($Request.Name, $Request.Location.TrimEnd("\"), $Request.Trusted)
+		$source = [PackageSourceInfo]::new($Request.Name, $Request.Location.TrimEnd("\"), $Request.Trusted, $this.ProviderInfo)
+		$Request.WriteSource($source)
 	}
 
 	[void] UnregisterSource([SourceRequest] $Request) {
+		$source = Cobalt\Get-WinGetSource -Name $Request.Name
 		Cobalt\Unregister-WinGetSource -Name $Request.Name
-		# WinGet doesn't return anything after source operations, so we make up our own output object
-		$Request.WriteSource($Request.Name, '')
+		$sourceInfo = [PackageSourceInfo]::new($source.Name, $source.Arg, $this.ProviderInfo)
+		$Request.WriteSource($sourceInfo)
 	}
 
 	[void] SetSource([SourceRequest] $Request) {
