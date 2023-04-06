@@ -11,8 +11,6 @@ Get-ChildItem $ScriptPath/private -Recurse -Filter '*.ps1' -File | ForEach-Objec
 
 [PackageProvider("WinGet")]
 class WinGetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFindPackage, IInstallPackage, IUninstallPackage {
-	WinGetProvider() : base('47e987f7-7d96-4e7b-853e-182ee6e396ae') { }
-
 	[void] GetSource([SourceRequest] $Request) {
 		Cobalt\Get-WinGetSource | Where-Object {$_.Name -Like $Request.Name} | ForEach-Object {
 			$source = [PackageSourceInfo]::new($_.Name, $_.Arg, $true, $this.ProviderInfo)
@@ -61,5 +59,6 @@ class WinGetProvider : PackageProvider, IGetSource, ISetSource, IGetPackage, IFi
 	}
 }
 
-[PackageProviderManager]::RegisterProvider([WinGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
-
+[guid] $id = '47e987f7-7d96-4e7b-853e-182ee6e396ae'
+[PackageProviderManager]::RegisterProvider($id, [WinGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
+$MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = { [PackageProviderManager]::UnregisterProvider($id) }
