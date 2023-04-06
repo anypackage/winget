@@ -19,7 +19,7 @@ function Write-Package {
 				if (-not $package.version) {
 					$package.Version = $null
 				}
-				
+
 				if ($package.Source) {
 					# If source information is provided, construct a source object for inclusion in the results
 					$location = $sources | Where-Object Name -EQ $package.Source | Select-Object -ExpandProperty Arg
