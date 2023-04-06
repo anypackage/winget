@@ -16,18 +16,20 @@ function Write-Package {
 	process {
 		foreach ($package in $InputObject) {
 			if ($package.ID) {
-				if (-not $package.Version) {
-					$Request.WriteVerbose("Package '$($package.ID)' does not have a version, changing to 0.")
-					$package.Version = '0'
+				if (-not $package.version) {
+					$package.Version = $null
 				}
-
+				
 				if ($package.Source) {
 					# If source information is provided, construct a source object for inclusion in the results
-					$source = $Request.NewSourceInfo($package.Source,($sources | Where-Object Name -EQ $package.Source | Select-Object -ExpandProperty Arg),$true)
-					$Request.WritePackage($package.ID, $package.Version, '', $source)
+					$location = $sources | Where-Object Name -EQ $package.Source | Select-Object -ExpandProperty Arg
+					$source = [PackageSourceInfo]::new($package.Source, $location, $true, $Request.ProviderInfo)
+					$package = [PackageInfo]::new($package.ID, $package.Version, $source, $Request.ProviderInfo)
 				} else {
-					$Request.WritePackage($package.ID, $package.Version)
+					$package = [PackageInfo]::new($package.ID, $package.Version, $Request.ProviderInfo)
 				}
+
+				$Request.WritePackage($package)
 			}
 		}
 	}
