@@ -9,5 +9,5 @@ function Get-WinGetPackage {
 	# We apply additional package name filtering when using wildcards to make WinGet's wildcard behavior more PowerShell-esque
 	Cobalt\Get-WinGetPackage |
 		Where-Object {$Request.IsMatch($_.ID)} |
-			Where-Object {-Not $Request.Version -Or $Request.Version.Satisfies($_.Version)}
+			Where-Object {-Not $Request.Version -Or ($_.Version -And $Request.Version.Satisfies($_.Version))}
 }
