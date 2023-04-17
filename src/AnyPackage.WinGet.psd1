@@ -1,6 +1,6 @@
 @{
 	RootModule = 'AnyPackage.WinGet.psm1'
-	ModuleVersion = '0.0.6'
+	ModuleVersion = '0.0.7'
 	CompatiblePSEditions = @('Desktop', 'Core')
 	GUID = '47e987f7-7d96-4e7b-853e-182ee6e396ae'
 	Author = 'Ethan Bergstrom'
