@@ -26,9 +26,9 @@
 		}
 		PSData = @{
 			Tags = @('AnyPackage','Provider','WinGet','Windows')
-			LicenseUri = 'https://github.com/AnyPackage/AnyPackage.WinGet/blob/main/LICENSE'
-			ProjectUri = 'https://github.com/AnyPackage/AnyPackage.WinGet'
-			ReleaseNotes = 'Please see https://github.com/AnyPackage/AnyPackage.WinGet/blob/main/CHANGELOG.md for release notes'
+			LicenseUri = 'https://github.com/anypackage/winget/blob/main/LICENSE'
+			ProjectUri = 'https://github.com/anypackage/winget'
+			ReleaseNotes = 'Please see https://github.com/anypackage/winget/blob/main/CHANGELOG.md for release notes'
 		}
 	}
     HelpInfoURI = 'https://go.anypackage.dev/help'
