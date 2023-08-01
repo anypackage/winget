@@ -11,7 +11,6 @@
 [build-site]: https://github.com/anypackage/winget/actions/workflows/ci.yml
 [cf-site]: https://www.codefactor.io/repository/github/anypackage/winget
 
-
 AnyPackage.WinGet is an AnyPackage provider that facilitates installing WinGet packages from any compatible repository.
 
 ## Requirements
